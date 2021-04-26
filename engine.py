@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 
+
 # 获取该store所有page的url
 def get_all_page_url_of_store(front_page_url):
     urls = [front_page_url]
@@ -42,42 +43,18 @@ def get_item_title_price(url):
     }
     res = requests.get(url, headers=headers)
     soup = BeautifulSoup(res.text, 'lxml')
-    item=soup.find('h1', {'class': 'tm-marketplace-buyer-options__listing_title'})
-    pricetemp=soup.find('p', {'class': 'tm-buy-now-box__price p-h1'})
+    item = soup.find('h1', {'class': 'tm-marketplace-buyer-options__listing_title'})
+    pricetemp = soup.find('p', {'class': 'tm-buy-now-box__price p-h1'})
     title = 'Undefine'
     price = 'listing closed'
     if item:
-        title=item.get_text()
+        title = item.get_text().strip('\n')
         if pricetemp:
             price = pricetemp.find('strong').get_text()
     temp_list = [title, price]
+
     return temp_list
 
 
-def main():
-    time_start = time.time()
-    try:
-        dicts = {}
-        urls = get_all_page_url_of_store("https://www.trademe.co.nz/stores/smartdepot/feedback")
-        for url in urls:
-            item_ids = get_id_of_page(url)
-            for id in item_ids:
-                item_url = "https://www.trademe.co.nz/a/marketplace/listing/" + id
-                item_dict = {"url": item_url, "count": 1}
-
-                if id in dicts.keys():
-                    dicts[id]["count"] += 1
-                else:
-                    get_item_title_price(item_url)
-                    item_dict["title"] = item_url[0]
-                    item_dict["price"] = item_url[1]
-                    dicts[id] = item_dict
-    except Exception as e:
-        print(e)
-
-    time_end = time.time()
-    print('time cost', time_end - time_start, 's')
-    print(dicts)
 
 
-main()
