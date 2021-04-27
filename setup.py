@@ -15,5 +15,6 @@ setup(
     app=APP,
     data_files=DATA_FILES,
     options={'py2app': OPTIONS},
-    setup_requires=['py2app','bs4','tk','xlwt','lxml'],
+    setup_requires=['py2app'],
+    install_requires=['bs4','xlwt','lxml']
 )
